@@ -8,7 +8,7 @@ params = { email: "test@email.com", "password": "password" }
 
 a = { "client" => "Xn-5ZDXCi5OI2Aw4Iu39HQ", "access-token" =>"OFOMBla1MKsMBwWXidsCaA", "uid" =>"test@email.com"}
 # delete
-response = HTTParty.delete("http://localhost:3000/auth/", headers: a)
+response = HTTParty.delete("http://localhost:3000/auth/sign_out", headers: a)
 
 =begin
 tokens = {
