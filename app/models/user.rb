@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class User < ActiveRecord::Base
+  validates_presence_of :first_name, :last_name 
+
   extend Devise::Models
 
   # Include default devise modules. Others available are:

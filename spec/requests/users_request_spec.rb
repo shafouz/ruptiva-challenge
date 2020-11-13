@@ -1,8 +1,30 @@
 require 'rails_helper'
 
 RSpec.describe "Users", type: :request do
+
+  def login
+    post user_session_path, params: { email: "joao@email.com", password: "12345678" }.to_json, headers: { 'CONTENT_TYPE' => 'application/json', 'ACCEPT' => 'application/json' }
+  end
+
+  def get_tokens(resp)
+    client = resp.headers['client']
+    token = resp.headers['access-token']
+    expiry = resp.headers['expiry']
+    token_type = resp.headers['token-type']
+    uid = resp.headers['uid']
+
+    {
+      "client": client,
+      "access-token": token,
+      "expiry": expiry,
+      "token_type": token_type,
+      "uid": uid
+    }
+  end
+
   describe "auth paths" do
     let!(:user) { attributes_for(:user) }
+    let(:created_user) { create(:user) }
 
     describe "new user" do
       it "creates a new user" do 
@@ -17,10 +39,9 @@ RSpec.describe "Users", type: :request do
     end
 
     describe "sign_in/sign_out" do
-      let!(:logged_user) { create(:user) }
-
       it "sign_in a user" do
-        post user_session_path, params: user
+        created_user
+        login
         expect(response.status).to eq(200)
       end
 
@@ -30,7 +51,7 @@ RSpec.describe "Users", type: :request do
       end
 
       it "sign_out a user" do
-        tokens = logged_user.create_new_auth_token
+        tokens = created_user.create_new_auth_token
 
         delete destroy_user_session_path, params: tokens
         expect(response.status).to eq(200)
@@ -45,6 +66,56 @@ RSpec.describe "Users", type: :request do
     end
 
     describe "delete user" do
+      it "deletes a signed_in user" do
+        created_user
+        login
+        delete user_registration_path, params: get_tokens(response)
+        expect(response.status).to eq(200)
+      end
+    end
+
+    describe "update user" do
+      it "updates a signed_in user" do
+        created_user
+        login
+        params = get_tokens(response).merge({ password: "qwerty123", password_confirmation: "qwerty123" })
+        put user_registration_path, params: params 
+        expect(response.status).to eq(200)
+      end
     end
   end
+
+  describe "getter actions" do
+    let!(:user) { create(:user) }
+
+    it "fails to get users when not signed in" do
+      get users_path
+      expect(response.status).to eq(401)
+    end
+
+    it "gets all users when signed in" do
+      login
+      get users_path, params: get_tokens(response)
+      expect(response.status).to eq(200)
+    end
+
+    it "fails to get user when not signed in" do
+      get user_path
+      expect(response.status).to eq(401)
+    end
+
+    it "gets user when signed in" do
+      login
+      get user_path, params: get_tokens(response)
+      expect(response.status).to eq(200)
+    end
+
+    it "returns the correct user" do
+      login
+      get user_path, params: get_tokens(response)
+      body = JSON.parse(response.body)
+      expect(body["user"]["uid"]).to eq(user.uid)
+    end
+  end
+
 end
