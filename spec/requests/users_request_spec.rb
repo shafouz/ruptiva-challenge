@@ -1,26 +1,8 @@
 require 'rails_helper'
+require './spec/support/test_helper.rb'
 
 RSpec.describe "Users", type: :request do
-
-  def login
-    post user_session_path, params: { email: "joao@email.com", password: "12345678" }.to_json, headers: { 'CONTENT_TYPE' => 'application/json', 'ACCEPT' => 'application/json' }
-  end
-
-  def get_tokens(resp)
-    client = resp.headers['client']
-    token = resp.headers['access-token']
-    expiry = resp.headers['expiry']
-    token_type = resp.headers['token-type']
-    uid = resp.headers['uid']
-
-    {
-      "client": client,
-      "access-token": token,
-      "expiry": expiry,
-      "token_type": token_type,
-      "uid": uid
-    }
-  end
+  include TestHelper
 
   describe "auth paths" do
     let!(:user) { attributes_for(:user) }
@@ -110,12 +92,6 @@ RSpec.describe "Users", type: :request do
       expect(response.status).to eq(200)
     end
 
-    it "returns the correct user" do
-      login
-      get user_path, params: get_tokens(response)
-      body = JSON.parse(response.body)
-      expect(body["user"]["uid"]).to eq(user.uid)
-    end
   end
 
 end
