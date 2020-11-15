@@ -19,4 +19,14 @@ RSpec.describe User, type: :model do
       expect(@user).to_not be_valid
     end
   end
+
+=begin
+  describe "soft delete" do
+    it "doesnt fully delete a record" do
+      User.create(@user)
+      User.destroy(1)
+      expect(User.count).to eq(1)
+    end
+  end
+=end
 end

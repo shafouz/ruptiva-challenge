@@ -18,6 +18,11 @@ RSpec.describe "Users", type: :request do
         post user_registration_path
         expect(response.status).to eq(422)
       end
+
+      it "saves a new user" do
+        post user_registration_path, params: user
+        expect(User.count).to eq(1)
+      end
     end
 
     describe "sign_in/sign_out" do
@@ -53,45 +58,60 @@ RSpec.describe "Users", type: :request do
         login
         delete user_registration_path, params: get_tokens(response)
         expect(response.status).to eq(200)
+        expect(User.count).to eq(0)
       end
     end
 
     describe "update user" do
-      it "updates a signed_in user" do
+
+      before(:example) do
         created_user
         login
+      end
+
+      it "updates a signed_in user" do
         params = get_tokens(response).merge({ password: "qwerty123", password_confirmation: "qwerty123" })
         put user_registration_path, params: params 
         expect(response.status).to eq(200)
       end
+
+      it "changes first name" do
+        params = get_tokens(response).merge({ password: "qwerty123", password_confirmation: "qwerty123", first_name: "Carlos" })
+        put user_registration_path, params: params 
+        expect(User.exists?(first_name: "Carlos")).to eq(true)
+      end
+
+      it "changes last name" do
+        params = get_tokens(response).merge({ password: "qwerty123", password_confirmation: "qwerty123", last_name: "Andre" })
+        put user_registration_path, params: params 
+        expect(User.exists?(last_name: "Andre")).to eq(true)
+      end
+
+      it "changes email" do
+        params = get_tokens(response).merge({ password: "qwerty123", password_confirmation: "qwerty123", email: "asdf@asdf.com" })
+        put user_registration_path, params: params 
+        expect(User.exists?(email: "asdf@asdf.com")).to eq(true)
+      end
+    end
+
+    describe "getter actions" do
+      let!(:user) { create(:user) }
+
+      it "fails to get users when not signed in" do
+        get users_path
+        expect(response.status).to eq(401)
+      end
+
+      it "fails to get user when not signed in" do
+        get user_path
+        expect(response.status).to eq(401)
+      end
+
+      it "gets user when signed in" do
+        login
+        get user_path, params: get_tokens(response)
+        expect(response.status).to eq(200)
+      end
     end
   end
-
-  describe "getter actions" do
-    let!(:user) { create(:user) }
-
-    it "fails to get users when not signed in" do
-      get users_path
-      expect(response.status).to eq(401)
-    end
-
-    it "gets all users when signed in" do
-      login
-      get users_path, params: get_tokens(response)
-      expect(response.status).to eq(200)
-    end
-
-    it "fails to get user when not signed in" do
-      get user_path
-      expect(response.status).to eq(401)
-    end
-
-    it "gets user when signed in" do
-      login
-      get user_path, params: get_tokens(response)
-      expect(response.status).to eq(200)
-    end
-
-  end
-
 end

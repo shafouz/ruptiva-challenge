@@ -10,4 +10,11 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   include DeviseTokenAuth::Concerns::User
+
+  # soft delete
+  # def destroy
+  # update(:deleted_at, Time.current)
+  # end
+
+
 end
