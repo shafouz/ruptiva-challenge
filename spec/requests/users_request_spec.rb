@@ -97,11 +97,6 @@ RSpec.describe "Users", type: :request do
     describe "getter actions" do
       let!(:user) { create(:user) }
 
-      it "fails to get users when not signed in" do
-        get users_path
-        expect(response.status).to eq(401)
-      end
-
       it "fails to get user when not signed in" do
         get user_path
         expect(response.status).to eq(401)
@@ -113,5 +108,30 @@ RSpec.describe "Users", type: :request do
         expect(response.status).to eq(200)
       end
     end
+
   end
+
+  describe "admin actions" do
+    let!(:admin) { create(:user, role: "admin") }
+
+    it "fails to get users when not signed in" do
+      get users_path
+      expect(response.status).to eq(401)
+    end
+
+    it "gets all users when signed as admin" do
+      login
+      get users_path, params: get_tokens(response)
+      expect(response.status).to eq(200)
+    end
+
+    it "gets user by email as admin" do
+      login
+      params = get_tokens(response).merge({ email: "joao@email.com" })
+      get admin_user_path, params: params
+      expect(response.status).to eq(200)
+      expect(response.body).to include("joao@email.com")
+    end
+  end
+
 end
