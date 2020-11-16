@@ -1,6 +1,6 @@
 # ruptiva challenge
 
-### Gems used
+### Extra gems used
 
 * factory_bot_rails, cria factories que servem como substituto de fixtures
 * rswag-specs, rswag-ui, rswag-api, cria documentaçao da api via swagger
