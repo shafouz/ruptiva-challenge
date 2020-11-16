@@ -3,7 +3,7 @@ class UsersController < ApplicationController
 
   def index
     authorize current_user
-    @users = User.all
+    @users = User.where(deleted_at: nil)
     render json: { users: @users }, status: 200
   end
 

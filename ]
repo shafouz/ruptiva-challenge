@@ -58,7 +58,7 @@ RSpec.describe "Users", type: :request do
         login
         delete user_registration_path, params: get_tokens(response)
         expect(response.status).to eq(200)
-        expect(User.where(deleted_at: nil).count).to eq(0)
+        expect(User.count).to eq(0)
       end
     end
 
@@ -125,23 +125,11 @@ RSpec.describe "Users", type: :request do
       expect(response.status).to eq(200)
     end
 
-    describe "index using soft delete" do
-      before(:each) do
-        @user = User.create(first_name: "foo", last_name: "bar", email: "abc@abc.abc", password: "123456789", password_confirmation: "123456789")
-        @user.destroy
-      end
-
-      it "it doesnt get a soft-deleted user" do
-        login
-        get users_path, params: get_tokens(response)
-        expect(response.body).not_to include("abc@abc.abc")
-      end
-
-      it "it still shows all users" do
-        login
-        get users_path, params: get_tokens(response)
-        expect(response.body).to include("joao@email.com")
-      end
+    it "it doesnt get a soft-deleted user" do
+      @user = User.create(fist_name: "foo", last_name: "bar", email: "abc@abc.abc", password: "123456789", password_confirmation: "123456789")
+      @user.destroy
+      login
+      get users_path, params: get_tokens(response)
     end
 
     it "gets user by email as admin" do
