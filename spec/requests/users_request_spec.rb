@@ -69,9 +69,12 @@ RSpec.describe "Users", type: :request do
         login
       end
 
-      it "updates a signed_in user" do
+      it "updates a signed_in user password" do
         params = get_tokens(response).merge({ password: "qwerty123", password_confirmation: "qwerty123" })
         put user_registration_path, params: params 
+        expect(response.status).to eq(200)
+        delete destroy_user_session_path
+        post user_session_path, params: { email: "joao@email.com", password: "qwerty123" }
         expect(response.status).to eq(200)
       end
 

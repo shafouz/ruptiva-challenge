@@ -30,6 +30,7 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails'
   gem 'factory_bot_rails'
+  gem 'rswag-specs'
 end
 
 group :test do
@@ -48,3 +49,5 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'devise_token_auth'
 gem 'httparty'
 gem 'pundit'
+gem 'rswag-api'
+gem 'rswag-ui'

@@ -1,0 +1,397 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/auth":
+    post:
+      summary: Creates an user
+      tags:
+      - Users
+      parameters:
+      - name: email
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: password
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: password_confirmation
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: first_name
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: last_name
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: creates user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                  password:
+                    type: string
+                  password_confirmation:
+                    type: string
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                required:
+                - email
+                - password
+                - password_confirmation
+                - first_name
+                - last_name
+        '422':
+          description: unprocessable entity
+          content: {}
+    patch:
+      summary: Updates an user data
+      tags:
+      - Users
+      parameters:
+      - name: email
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: password
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: password_confirmation
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: first_name
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: last_name
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: client
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: token_type
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: uid
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: updates user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                  password:
+                    type: string
+                  password_confirmation:
+                    type: string
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                  uid:
+                    type: string
+                  token_type:
+                    type: string
+                  client:
+                    type: string
+                required:
+                - password
+                - password_confirmation
+                - uid
+                - token_type
+                - client
+        '404':
+          description: not found
+          content: {}
+    delete:
+      summary: Soft-deletes an user
+      tags:
+      - Users
+      parameters:
+      - name: client
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: token_type
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: uid
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: deletes an user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uid:
+                    type: string
+                  token_type:
+                    type: string
+                  client:
+                    type: string
+                required:
+                - uid
+                - token_type
+                - client
+        '404':
+          description: not found
+          content: {}
+  "/user":
+    get:
+      summary: Show current logged in user
+      tags:
+      - Users
+      parameters:
+      - name: client
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: token_type
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: uid
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: get current_user data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  client:
+                    type: string
+                  token_type:
+                    type: string
+                  uid:
+                    type: string
+                required:
+                - client
+                - token_type
+                - uid
+        '401':
+          description: unauthorized
+          content: {}
+  "/users":
+    get:
+      summary: Show all users, admin only
+      tags:
+      - Users
+      parameters:
+      - name: client
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: token_type
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: uid
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: get current_user data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  client:
+                    type: string
+                  token_type:
+                    type: string
+                  uid:
+                    type: string
+                required:
+                - client
+                - token_type
+                - uid
+        '401':
+          description: unauthorized
+          content: {}
+  "/admin/user":
+    get:
+      summary: Gets an user by email, admin only
+      tags:
+      - Users
+      parameters:
+      - name: email
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: client
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: token_type
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: uid
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: get current_user data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                  client:
+                    type: string
+                  token_type:
+                    type: string
+                  uid:
+                    type: string
+                required:
+                - email
+                - client
+                - token_type
+                - uid
+        '401':
+          description: unauthorized
+          content: {}
+  "/auth/sign_in":
+    post:
+      summary: Logs in an user
+      tags:
+      - Users
+      parameters:
+      - name: email
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: password
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: login user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                  password:
+                    type: string
+                required:
+                - email
+                - password
+        '401':
+          description: unauthorized
+          content: {}
+    delete:
+      summary: Logs out an user
+      tags:
+      - Users
+      parameters:
+      - name: client
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: token_type
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: uid
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: logout user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  client:
+                    type: string
+                  token_type:
+                    type: string
+                  uid:
+                    type: string
+                required:
+                - client
+                - token_type
+                - uid
+        '401':
+          description: unauthorized
+          content: {}
+servers:
+- url: http://{defaultHost}
+  variables:
+    defaultHost:
+      default: 0.0.0.0:3000
